@@ -8,6 +8,8 @@ var app = createApp({
       totalTime: 0,
       timerId: null,
       currentState: "Idle",
+      roundsData: {},
+      userGoal: 0,
     };
   },
   methods: {
@@ -19,13 +21,21 @@ var app = createApp({
 
       this.startTimer(workTime, () => {
         this.currentState = "Break";
+        this.$refs.alarm.play();
+
         this.startTimer(breakTime, () => {
+          this.$refs.alarm.play();
           this.currentState = "Idle";
+          this.roundsData.rounds.push({ workTime, breakTime, points: workTime / 25, date: new Date().toLocaleString() });
+          this.save();
         });
       });
     },
 
-    startTimer(timeInMinutes, callback) {
+    save() {
+      localStorage.setItem("rounds", JSON.stringify(this.roundsData));
+    },
+    startTimer(timeInMinutes, endCallBack) {
       this.time = 1000 * 60 * timeInMinutes;
       this.totalTime = this.time;
       this.endTime = new Date(Date.now() + this.time);
@@ -38,7 +48,7 @@ var app = createApp({
         this.time -= 100;
         if (this.time <= 0) {
           clearInterval(this.timerId);
-          callback();
+          endCallBack();
         }
       }, 100);
     },
@@ -54,6 +64,35 @@ var app = createApp({
         transform: `rotate(${rotate}deg) translate(150px, 0px)`,
       };
     },
+    updateGoal(e) {
+      e.preventDefault();
+      console.log(this.userGoal);
+      this.roundsData.goal = this.userGoal;
+      this.save();
+    },
+    clearAllGoals() {
+      this.roundsData = { rounds: [], goal: null };
+      this.save();
+    },
+  },
+  computed: {
+    totalPoints: function () {
+      return this.roundsData.rounds
+        ?.map((x) => x.points)
+        .reduce((a, c) => a + c, 0)
+        .toFixed(2);
+    },
+    pointsTillGoal: function () {
+      return (this.roundsData.goal - this.totalPoints).toFixed(2);
+    },
+  },
+  mounted() {
+    var data = localStorage.getItem("rounds");
+    if (data) {
+      this.roundsData = JSON.parse(data);
+    } else {
+      this.roundsData = { rounds: [], goal: null };
+    }
   },
 });
 

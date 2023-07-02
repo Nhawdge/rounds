@@ -12,19 +12,68 @@
 </head>
 
 <body>
-
+    <h1>Rounds</h1>
     <main id="app">
-
-        <div class="contained">
-            <h1> {{ displayTime() }}</h1>
-            <span> {{ currentState}}</span>
-            <button @click="startRound(0.1,0.2)"> Start Test Round </button>
-            <button @click="startRound(25,5)"> Start Short Round </button>
-            <button @click="startRound(50,10)"> Start Long Round </button>
+        <div class="timer">
+            <div class="contained">
+                <button @click="startRound(0.1,0.1)"> Start Test Round </button>
+                <button @click="startRound(25,5)"> Start Short Round </button>
+                <button @click="startRound(50,10)"> Start Long Round </button>
+                <div>
+                    <span> {{ currentState}}</span>
+                </div>
+                <div><span>Points to goal: {{ pointsTillGoal }}</span></div>
+            </div>
+            <div class="frame">
+                <div class="face">
+                    <div class="clock" :class="currentState.toLowerCase()">
+                        <div class="hand" :style="handStyle()">
+                            <hr>
+                        </div>
+                    </div>
+                </div>
+                <div class="center-align">
+                    <strong> {{ displayTime() }}</strong>
+                </div>
+            </div>
         </div>
-        <div class="clock" :class="currentState.toLowerCase()">
-            <hr class="hand" :style="handStyle()">
+        <div>
+            <details>
+                <summary>
+                    Goals
+                </summary>
+                <h2>
+                    Goals
+                </h2>
+                <button @click="clearAllGoals">Clear All</button>
+                <form @submit="updateGoal">
+                    <input v-model="userGoal" type="number">
+                    <input type="submit" value="Set Points goal">
+                </form>
+                <div>
+                    <span>Total Points: {{ totalPoints }} </span>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Points</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="round in roundsData.rounds">
+                            <td>
+                                {{ round.date }}
+                            </td>
+                            <td>
+                                {{ round.points }}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </details>
         </div>
+        <audio ref="alarm" src="alarm.wav"></audio>
     </main>
 </body>
 

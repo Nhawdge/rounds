@@ -12,19 +12,41 @@ body {
 .contained {
   max-width: 200px;
   margin: auto;
+  flex: 1;
+}
+.frame {
+  flex: 3;
+}
+.face {
+  display: flex;
+  align-items: center;
+  height: 300px;
+  width: 300px;
+}
+.timer {
+  height: 100%;
+  width: 100%;
+  display: flex;
 }
 
 .clock {
-  height: 150px;
-  width: 300px;
   border-radius: 50%;
-  padding: 150px;
-  padding-top: 300px;
-  margin: auto;
+  height: 100%;
+  width: 100%;
+}
+
+.clock hr {
+  width: 50%;
+  margin-left: 0px;
+}
+
+.clock h2 {
+  text-align: center;
 }
 
 .hand {
   position: relative;
+  top: 150px;
 }
 
 .idle {
@@ -37,4 +59,14 @@ body {
 
 .break {
   background-color: var(--break);
+}
+
+table tr td {
+  border-bottom: black solid 1px;
+  padding: 0px 10px;
+}
+
+.center-align {
+  text-align: center;
+  width: 300px;
 }
