@@ -1,3 +1,14 @@
+* {
+  --background: #81e0d7;
+  --work: #ed6c6b;
+  --break: #9c83f7;
+  --idle: #edc380;
+}
+
+body {
+  background-color: var(--background);
+}
+
 .contained {
   max-width: 200px;
   margin: auto;
@@ -17,13 +28,13 @@
 }
 
 .idle {
-  background-color: aliceblue;
+  background-color: var(--idle);
 }
 
 .work {
-  background-color: red;
+  background-color: var(--work);
 }
 
 .break {
-  background-color: green;
+  background-color: var(--break);
 }

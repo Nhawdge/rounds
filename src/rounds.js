@@ -3,6 +3,7 @@ const { createApp } = Vue;
 var app = createApp({
   data() {
     return {
+      endTime: null,
       time: 0,
       totalTime: 0,
       timerId: null,
@@ -15,30 +16,31 @@ var app = createApp({
         clearInterval(this.timerId);
       }
       this.currentState = "Work";
-      this.time = 1000 * 60 * workTime;
-      this.totalTime = this.time;
-      this.timerId = setInterval(() => {
-        this.time -= 250;
-        if (this.time <= 0) {
-          clearInterval(this.timerId);
-          this.startBreak(breakTime);
-        }
-      }, 250);
-    },
-    startBreak(breakTime) {
-      if (this.timerId) {
-        clearInterval(this.timerId);
-      }
-      this.currentState = "Break";
-      this.time = 1000 * 60 * breakTime;
-      this.totalTime = this.time;
-      this.timerId = setInterval(() => {
-        this.time -= 250;
-        if (this.time <= 0) {
-          clearInterval(this.timerId);
+
+      this.startTimer(workTime, () => {
+        this.currentState = "Break";
+        this.startTimer(breakTime, () => {
           this.currentState = "Idle";
+        });
+      });
+    },
+
+    startTimer(timeInMinutes, callback) {
+      this.time = 1000 * 60 * timeInMinutes;
+      this.totalTime = this.time;
+      this.endTime = new Date(Date.now() + this.time);
+
+      this.timerId = setInterval(() => {
+        var now = new Date();
+        var diff = this.endTime - now;
+        this.time = diff;
+
+        this.time -= 100;
+        if (this.time <= 0) {
+          clearInterval(this.timerId);
+          callback();
         }
-      }, 250);
+      }, 100);
     },
     displayTime() {
       var minutes = ("00" + Math.floor(this.time / 1000 / 60)).substr(-2);
