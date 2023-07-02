@@ -19,10 +19,14 @@
                 <button @click="startRound(0.1,0.1)"> Start Test Round </button>
                 <button @click="startRound(25,5)"> Start Short Round </button>
                 <button @click="startRound(50,10)"> Start Long Round </button>
+                <button @click="logRound(25)"> Log Short Round </button>
+                <button @click="logRound(50)"> Log Long Round </button>
                 <div>
                     <span> {{ currentState}}</span>
                 </div>
-                <div><span>Points to goal: {{ pointsTillGoal }}</span></div>
+                <div>
+                    <span>Points to goal: {{ pointsTillGoal }}</span>
+                </div>
             </div>
             <div class="frame">
                 <div class="face">
@@ -38,6 +42,9 @@
             </div>
         </div>
         <div>
+            <textarea :value="shareText"></textarea>
+        </div>
+        <div>
             <details>
                 <summary>
                     Goals
@@ -45,11 +52,20 @@
                 <h2>
                     Goals
                 </h2>
-                <button @click="clearAllGoals">Clear All</button>
                 <form @submit="updateGoal">
-                    <input v-model="userGoal" type="number">
+                    <div>
+                        <strong>
+                            Weekly Points Goal:
+                        </strong>
+                        <input v-model="userWeeklyGoal" type="number">
+                    </div>
+                    <div>
+                        <strong>Yearly Points Goal:</strong>
+                        <input v-model="userYearlyGoal" type="number">
+                    </div>
                     <input type="submit" value="Set Points goal">
                 </form>
+                <button @click="clearAllGoals">Clear All</button>
                 <div>
                     <span>Total Points: {{ totalPoints }} </span>
                 </div>

@@ -9,7 +9,8 @@ var app = createApp({
       timerId: null,
       currentState: "Idle",
       roundsData: {},
-      userGoal: 0,
+      userWeeklyGoal: null,
+      userYearlyGoal: null,
     };
   },
   methods: {
@@ -31,7 +32,9 @@ var app = createApp({
         });
       });
     },
-
+    logRound(workTime) {
+      this.roundsData.rounds.push({ workTime, breakTime: 0, points: workTime / 25, date: new Date().toLocaleString() });
+    },
     save() {
       localStorage.setItem("rounds", JSON.stringify(this.roundsData));
     },
@@ -52,10 +55,29 @@ var app = createApp({
         }
       }, 100);
     },
+
     displayTime() {
       var minutes = ("00" + Math.floor(this.time / 1000 / 60)).substr(-2);
       var seconds = ("00" + Math.floor((this.time / 1000) % 60)).substr(-2);
       return `${minutes}:${seconds}`;
+    },
+    weeksThisYear() {
+      var now = new Date();
+      var start = new Date(now.getFullYear(), 0, 0);
+      var diff = now - start + (start.getTimezoneOffset() - now.getTimezoneOffset()) * 60 * 1000;
+      var oneWeek = 1000 * 60 * 60 * 24 * 7;
+      var week = Math.floor(diff / oneWeek);
+      return week;
+    },
+    pointsThisWeek() {
+      var data = this.roundsData.rounds || [];
+      var pastSunday = new Date();
+      pastSunday.setDate(pastSunday.getDate() - pastSunday.getDay());
+      data.filter((x) => x.date > pastSunday);
+      return data
+        .map((x) => x.points)
+        .reduce((a, c) => a + c, 0)
+        .toFixed(2);
     },
     handStyle() {
       let rotate = -90 - (this.time / this.totalTime) * 360;
@@ -67,11 +89,12 @@ var app = createApp({
     updateGoal(e) {
       e.preventDefault();
       console.log(this.userGoal);
-      this.roundsData.goal = this.userGoal;
+      this.roundsData.weeklyGoal = this.userWeeklyGoal;
+      this.roundsData.yearlyGoal = this.userYearlyGoal;
       this.save();
     },
     clearAllGoals() {
-      this.roundsData = { rounds: [], goal: null };
+      this.roundsData = { rounds: [], weeklyGoal: null, yearlyGoal: null };
       this.save();
     },
   },
@@ -83,7 +106,13 @@ var app = createApp({
         .toFixed(2);
     },
     pointsTillGoal: function () {
-      return (this.roundsData.goal - this.totalPoints).toFixed(2);
+      return (this.roundsData.weeklyGoal - this.totalPoints).toFixed(2);
+    },
+    shareText: function () {
+      var currentYearExpectation = this.weeksThisYear() * this.roundsData.weeklyGoal;
+      var currentYearActual = this.totalPoints;
+
+      return `${this.pointsThisWeek()}/${this.roundsData.weeklyGoal} ${currentYearActual - currentYearExpectation}`;
     },
   },
   mounted() {
