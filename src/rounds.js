@@ -109,7 +109,7 @@ var app = createApp({
       return (this.roundsData.weeklyGoal - this.totalPoints).toFixed(2);
     },
     shareText: function () {
-      var currentYearExpectation = this.weeksThisYear() * this.roundsData.weeklyGoal;
+      var currentYearExpectation = (this.weeksThisYear() / 52) * this.roundsData.weeklyGoal;
       var currentYearActual = this.totalPoints;
 
       return `${this.pointsThisWeek()}/${this.roundsData.weeklyGoal} ${currentYearActual - currentYearExpectation}`;
