@@ -1,0 +1,29 @@
+.contained {
+  max-width: 200px;
+  margin: auto;
+}
+
+.clock {
+  height: 150px;
+  width: 300px;
+  border-radius: 50%;
+  padding: 150px;
+  padding-top: 300px;
+  margin: auto;
+}
+
+.hand {
+  position: relative;
+}
+
+.idle {
+  background-color: aliceblue;
+}
+
+.work {
+  background-color: red;
+}
+
+.break {
+  background-color: green;
+}

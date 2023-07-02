@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rounds</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="rounds.js" type="module"></script>
+    <link rel="stylesheet" href="rounds.css">
+</head>
+
+<body>
+
+    <main id="app">
+
+        <div class="contained">
+            <h1> {{ displayTime() }}</h1>
+            <span> {{ currentState}}</span>
+            <button @click="startRound(0.1,0.2)"> Start Test Round </button>
+            <button @click="startRound(25,5)"> Start Short Round </button>
+            <button @click="startRound(50,10)"> Start Long Round </button>
+        </div>
+        <div class="clock" :class="currentState.toLowerCase()">
+            <hr class="hand" :style="handStyle()">
+        </div>
+    </main>
+</body>
+
+</html>
