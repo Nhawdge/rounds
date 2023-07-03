@@ -34,13 +34,17 @@ var app = createApp({
     },
     logRound(workTime) {
       this.roundsData.rounds.push({ workTime, breakTime: 0, points: workTime / 25, date: new Date().toLocaleString() });
+      this.save();
     },
     save() {
       localStorage.setItem("rounds", JSON.stringify(this.roundsData));
     },
-    startTimer(timeInMinutes, endCallBack) {
+    startTimer(timeInMinutes, endCallBack, overrideMaxTime = 0) {
       this.time = 1000 * 60 * timeInMinutes;
       this.totalTime = this.time;
+      if (overrideMaxTime > 0) {
+        this.totalTime = overrideMaxTime;
+      }
       this.endTime = new Date(Date.now() + this.time);
 
       this.timerId = setInterval(() => {
@@ -93,6 +97,11 @@ var app = createApp({
       this.roundsData.yearlyGoal = this.userYearlyGoal;
       this.save();
     },
+    earlyStop() {
+      this.logRound(((this.totalTime - this.time) / 1000 / 60).toFixed(3));
+      clearInterval(this.timerId);
+      this.currentState = "Idle";
+    },
     clearAllGoals() {
       this.roundsData = { rounds: [], weeklyGoal: null, yearlyGoal: null };
       this.save();
@@ -123,6 +132,19 @@ var app = createApp({
       this.roundsData = { rounds: [], goal: null };
     }
   },
+  created() {
+    window.addEventListener("pageshow", function () {
+      var timer = JSON.parse(localStorage.getItem("timer"));
+      if (timer) {
+        console.log(timer, appRunning);
+        appRunning.startTimer(timer.time / 1000 / 60, () => {}, timer.totalTime);
+      }
+    });
+    window.addEventListener("beforeunload", () => {
+      console.log("destroyed");
+      localStorage.setItem("timer", JSON.stringify({ time: this.time, totalTime: this.totalTime, endTime: this.endTime, currentState: this.currentState }));
+    });
+  },
 });
 
 // app.component('page', {
@@ -134,4 +156,4 @@ var app = createApp({
 //     },
 // })
 
-app.mount("#app");
+var appRunning = app.mount("#app");
